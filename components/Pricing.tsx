@@ -1,5 +1,7 @@
 "use client"
+"use client"
 import { motion } from "motion/react";
+import { handlePlanSelection } from "@/app/actions";
 
 interface PricingFeature {
   name: string;
@@ -7,15 +9,17 @@ interface PricingFeature {
 }
 
 interface PricingPlanProps {
+  id: string;
   name: string;
   price: string;
   period: string;
   description: string;
   features: PricingFeature[];
   highlighted?: boolean;
+  buttonText?: string;
 }
 
-const PricingPlan = ({ name, price, period, description, features, highlighted = false }: PricingPlanProps) => {
+const PricingPlan = ({ id, name, price, period, description, features, highlighted = false, buttonText = "Elegir plan" }: PricingPlanProps) => {
   return (
     <motion.div 
       className={`card ${highlighted ? 'bg-primary text-primary-content border-primary' : 'bg-base-100 text-base-content'} shadow-xl`}
@@ -51,13 +55,17 @@ const PricingPlan = ({ name, price, period, description, features, highlighted =
           ))}
         </ul>
         <div className="card-actions justify-center mt-6">
-          <motion.button 
-            className={`btn ${highlighted ? 'btn-secondary' : 'btn-primary'} btn-block`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Elegir plan
-          </motion.button>
+          <form action={handlePlanSelection}>
+            <input type="hidden" name="planName" value={id} />
+            <motion.button 
+              type="submit"
+              className={`btn ${highlighted ? 'btn-secondary' : 'btn-primary'} btn-block`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {buttonText}
+            </motion.button>
+          </form>
         </div>
       </div>
       {highlighted && (
@@ -72,7 +80,24 @@ const PricingPlan = ({ name, price, period, description, features, highlighted =
 export default function Pricing() {
   const pricingPlans = [
     {
+      name: "Prueba Gratuita",
+      id: "freeTrial",
+      price: "$0",
+      period: "7 días",
+      description: "Prueba todas las funcionalidades sin costo",
+      features: [
+        { name: "Catálogo online ilimitado", included: true },
+        { name: "Carrito de compras", included: true },
+        { name: "Compartir por WhatsApp", included: true },
+        { name: "Sin comisiones por venta", included: true },
+        { name: "Soporte por email", included: true },
+      ],
+      highlighted: true,
+      buttonText: "Comenzar prueba gratuita"
+    },
+    {
       name: "Mensual",
+      id: "premium",
       price: "$9.990",
       period: "mes",
       description: "Acceso completo a todas las funcionalidades",
@@ -86,10 +111,11 @@ export default function Pricing() {
         { name: "Personalización básica", included: true },
         // { name: "Dominio personalizado", included: false }
       ],
-      highlighted: true
+      highlighted: false
     },
     {
       name: "Trimestral",
+      id: "bussiness",
       price: "$26.970",
       period: "3 meses",
       description: "Ahorra un 10% pagando por 3 meses",
@@ -105,27 +131,10 @@ export default function Pricing() {
       ],
       highlighted: false
     },
-    {
-      name: "Anual",
-      price: "$95.900",
-      period: "año",
-      description: "Ahorra un 20% pagando por un año completo",
-      features: [
-        { name: "Catálogo online ilimitado", included: true },
-        { name: "Carrito de compras", included: true },
-        { name: "Compartir por WhatsApp", included: true },
-        { name: "Sin comisiones por venta", included: true },
-        { name: "Actualizaciones ilimitadas", included: true },
-        { name: "Soporte prioritario", included: true },
-        { name: "Personalización avanzada", included: true },
-        // { name: "Dominio personalizado", included: true }
-      ],
-      highlighted: false
-    }
   ];
 
   return (
-    <section id="precios" className="py-20">
+    <section id="precios" className="py-8 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4">
         <motion.div 
           className="text-center mb-16"
@@ -134,10 +143,10 @@ export default function Pricing() {
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl font-bold mb-4">Planes y Precios</h2>
+          <h2 className="text-4xl font-bold mb-4">Comienza con una prueba gratuita</h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
           <p className="text-xl max-w-2xl mx-auto">
-            Soluciones flexibles que se adaptan a tus necesidades y presupuesto
+            Prueba Venta Click durante 7 días sin compromiso. Si te gusta, elige el plan que mejor se adapte a tu negocio.
           </p>
         </motion.div>
 
@@ -151,11 +160,12 @@ export default function Pricing() {
               description={plan.description}
               features={plan.features}
               highlighted={plan.highlighted}
+              id={plan.id}
             />
           ))}
         </div>
 
-        <motion.div 
+        {/* <motion.div 
           className="text-center mt-16"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -164,7 +174,7 @@ export default function Pricing() {
         >
           <p className="mb-4 text-lg">¿Necesitas un plan personalizado?</p>
           <button className="btn btn-outline btn-primary btn-lg">Contáctanos</button>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );

@@ -1,7 +1,8 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { db } from "@/services/db"
 import bcrypt from "bcryptjs"
+
+import { db } from "@/services/db"
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -13,7 +14,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!credentials.email || !credentials.password) {
           return null
         }
-        const user = await db.user.findUnique({ where: { email: credentials.email } })
+        const user = await db.user.findUnique({ where: { email: credentials.email }, include: { subscriptions: true } })
         if (!user || !user.password) {
           return null
         }
@@ -31,6 +32,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.plan = user?.subscriptions?.plan || "Free";
       }
       return token;
     },
@@ -38,6 +40,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
+        session.user.plan = token.plan as string;
       }
       return session;
     },
