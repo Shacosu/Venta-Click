@@ -2,6 +2,7 @@
 
 import { db } from "./db"
 import bcrypt from "bcryptjs"
+import { auth } from "@/auth"
 
 export const getUserByEmail = async (email: string) => {
     return await db.user.findUnique({ where: { email } })

@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "motion/react"
+import { useRouter } from "next/navigation";
 
 interface HeroProps {
   title: string;
@@ -9,6 +10,7 @@ interface HeroProps {
 }
 
 export default function Hero({ title, subtitle, buttonText }: HeroProps) {
+  const router = useRouter();
   return (
     <div className="hero min-h-screen relative overflow-hidden">
       {/* Background with overlay */}
@@ -94,6 +96,7 @@ export default function Hero({ title, subtitle, buttonText }: HeroProps) {
             transition={{ duration: 0.5, delay: 0.4 }}
             whileHover={{ scale: 1.05, boxShadow: '0px 0px 8px rgb(255,255,255)' }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => router.push('#precios')}
           >
             {buttonText}
           </motion.button>

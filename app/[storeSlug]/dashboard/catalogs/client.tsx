@@ -1,25 +1,40 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useState, startTransition } from "react";
-import { Cart } from "@prisma/client";
+import { useState, startTransition, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
-interface Carts {
-  createCartAction: (name: string, notes: string, userId: string) => Promise<{ success: boolean; message: string; }>
+import slugify from "slugify";
+
+interface CatalogsProps {
+  createCatalogAction: (name: string, notes: string, userId: string) => Promise<{ success: boolean; message: string; }>
 }
 
-export default function Carts({ createCartAction }: Carts) {
+export default function Catalogs({ createCatalogAction }: CatalogsProps) {
+  const storeSlug = usePathname().split('/')[2];
   const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
   const [notes, setNotes] = useState('');
 
   const { data: session } = useSession();
+
+  useEffect(() => {
+    const generatedSlug = slugify(name, { lower: true, strict: true });
+    setSlug(generatedSlug);
+  }, [name]);
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     startTransition(async () => {
-      await createCartAction(name, notes, session?.user?.id as string);
+      const result = await createCatalogAction(name, notes, session?.user?.id as string);
+      if (result.success) {
+        setName('');
+        setNotes('');
+      } else {
+        alert(result.message);
+      }
     });
   };
 
@@ -34,42 +49,25 @@ export default function Carts({ createCartAction }: Carts) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-xl font-semibold mb-4">Crear Nuevo Carrito</h2>
-
-          {/* {error && (
-            <motion.div 
-              className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              transition={{ duration: 0.3 }}
-            >
-              {error}
-            </motion.div>
-          )}
-          
-          {success && (
-            <motion.div 
-              className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              transition={{ duration: 0.3 }}
-            >
-              {success}
-            </motion.div>
-          )} */}
+          <h2 className="text-xl font-semibold mb-4">Crear Nuevo Catálogo</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre del carrito *
+                Nombre del catálogo *
               </label>
               <input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                placeholder="Nombre del carrito"
+                placeholder="Nombre del catálogo"
               />
+              {name && (
+                <div className="mt-2 text-sm text-gray-500 bg-gray-50 p-2 rounded-md">
+                  <span className="font-semibold">URL:</span> ventaclick.app/{storeSlug}/<span className="text-primary font-medium">{slug}</span>
+                </div>
+              )}
             </div>
 
             <div>
@@ -93,7 +91,7 @@ export default function Carts({ createCartAction }: Carts) {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
             >
-              Crear Carrito
+              Crear Catálogo
             </motion.button>
 
           </form>

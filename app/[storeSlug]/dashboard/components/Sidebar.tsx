@@ -6,18 +6,18 @@ import { useRouter, usePathname } from "next/navigation";
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  
+  const storeSlug = pathname.split('/')[1];
 
   const menuItems = [
-    { id: "overview", label: "General", icon: "📊", href: "/dashboard" },
-    { id: "products", label: "Productos", icon: "📦", href: "/dashboard/products" },
-    { id: "customers", label: "Carritos", icon: "🛒", href: "/dashboard/carts" },
-    { id: "segments", label: "Clientes", icon: "👥", href: "/dashboard/customers" },
-    { id: "regions", label: "Regiones", icon: "🌎", href: "/dashboard/regions" },
-    { id: "revenue", label: "Ingresos", icon: "💰", href: "/dashboard/revenue" },
-    { id: "orders", label: "Pedidos", icon: "📝", href: "/dashboard/orders" },
-    { id: "discounts", label: "Descuentos", icon: "🏷️", href: "/dashboard/discounts" },
-    { id: "configuration", label: "Configuración", icon: "⚙️", href: "/dashboard/configuration" },
+    { id: "overview", label: "General", icon: "📊", href: `/${storeSlug}/dashboard` },
+    { id: "products", label: "Productos", icon: "📦", href: `/${storeSlug}/dashboard/products` },
+    { id: "customers", label: "Catálogos", icon: "📚", href: `/${storeSlug}/dashboard/catalogs` },
+    { id: "segments", label: "Clientes", icon: "👥", href: `/${storeSlug}/dashboard/customers` },
+    { id: "regions", label: "Regiones", icon: "🌎", href: `/${storeSlug}/dashboard/regions` },
+    { id: "revenue", label: "Ingresos", icon: "💰", href: `/${storeSlug}/dashboard/revenue` },
+    { id: "orders", label: "Pedidos", icon: "📝", href: `/${storeSlug}/dashboard/orders` },
+    { id: "discounts", label: "Descuentos", icon: "🏷️", href: `/${storeSlug}/dashboard/discounts` },
+    { id: "configuration", label: "Configuración", icon: "⚙️", href: `/${storeSlug}/dashboard/configuration` },
   ];
 
  
@@ -25,7 +25,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-primary text-white h-screen shadow-md flex flex-col">
       <div className="p-2 border-b border-gray-200">
-        <Link href="/dashboard" className="flex items-center">
+        <Link href={`/${storeSlug}/dashboard`} className="flex items-center">
           <img src="/images/logo.png" alt="VentaClick Logo" title="VentaClick Logo" className="w-auto h-12 object-contain" />
         </Link>
       </div>
@@ -37,7 +37,7 @@ export default function Sidebar() {
             {menuItems.slice(0, 5).map((item) => (
               <motion.button
                 key={item.id}
-                className={`flex items-center w-full px-3 text-white py-2 text-sm rounded-lg ${
+                className={`flex items-center w-full px-3 text-white py-2 text-sm rounded-lg cursor-pointer ${
                   pathname === item.href
                     ? "bg-gray-100/20 text-primary font-medium"
                     : "text-gray-700 hover:bg-gray-200"

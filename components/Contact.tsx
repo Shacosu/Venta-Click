@@ -151,7 +151,8 @@ export default function Contact() {
                     name="name"
                     value={formState.name}
                     onChange={handleChange}
-                    className="input input-bordered w-full" 
+                    className="input input-bordered w-full"
+                    placeholder="Escriba su nombre"
                     required 
                   />
                 </div>
@@ -164,6 +165,7 @@ export default function Contact() {
                     value={formState.email}
                     onChange={handleChange}
                     className="input input-bordered w-full" 
+                    placeholder="Escriba su email"
                     required 
                   />
                 </div>
@@ -174,7 +176,7 @@ export default function Contact() {
                     name="subject"
                     value={formState.subject}
                     onChange={handleChange}
-                    className="select select-bordered w-full" 
+                    className="select select-bordered w-full"
                     required
                   >
                     <option value="" disabled>Selecciona un asunto</option>
@@ -192,6 +194,7 @@ export default function Contact() {
                     value={formState.message}
                     onChange={handleChange}
                     className="textarea textarea-bordered w-full h-32" 
+                    placeholder="Escriba su mensaje"
                     required
                   ></textarea>
                 </div>
