@@ -3,20 +3,20 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import Link from "next/link";
 
 export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
     
     try {
       const response = await signIn("credentials", {
@@ -24,14 +24,13 @@ export default function SignIn() {
         password,
         redirect: false
       });
-      if (response?.error === "CredentialsSignin") {
-        setError("Credenciales incorrectas. Por favor intenta nuevamente.");
-      }
+      if (response?.error === "CredentialsSignin") return toast.error("Credenciales incorrectas. Por favor intenta nuevamente.");
       if (response?.ok) {
+        toast.success("Inicio de sesión exitoso");
         router.push("/dashboard");
       }
     } catch (err) {
-      setError("Credenciales incorrectas. Por favor intenta nuevamente.");
+      return toast.error("Ocurrió un error inesperado. Por favor intenta nuevamente.");
     } finally {
       setIsLoading(false);
     }
@@ -67,18 +66,6 @@ export default function SignIn() {
             </Link>
           </p>
         </div>
-
-        {error && (
-          <motion.div 
-            className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            transition={{ duration: 0.3 }}
-          >
-            {error}
-          </motion.div>
-        )}
-
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4 rounded-md">
             <div>

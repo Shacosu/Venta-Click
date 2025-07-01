@@ -89,7 +89,6 @@ const PricingPlan = ({ id, name, price, period, description, features, highlight
 export default function Pricing() {
   const session = useSession()
   const isLoggedIn = !!session?.data?.user
-  console.log(isLoggedIn)
   const pricingPlans = [
     {
       name: "Mensual",

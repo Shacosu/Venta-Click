@@ -12,7 +12,7 @@ interface CatalogsProps {
 }
 
 export default function Catalogs({ createCatalogAction }: CatalogsProps) {
-  const storeSlug = usePathname().split('/')[2];
+  const storeSlug = usePathname().split('/')[1];
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [notes, setNotes] = useState('');

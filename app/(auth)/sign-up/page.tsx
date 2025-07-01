@@ -5,6 +5,8 @@ import { useState } from "react";
 import { signUp } from "@/app/(auth)/sign-up/actions";
 import { startTransition } from "react";
 import { signIn } from "next-auth/react";
+import { toast } from "sonner";
+
 import Link from "next/link";
 
 export default function SignUp() {
@@ -32,6 +34,7 @@ export default function SignUp() {
       startTransition(async () => {
         const response = await signUp(email, password, name)
         if (response.success) {
+          toast.success("Registro exitoso");
           await signIn("credentials", {
             email,
             password,
@@ -39,11 +42,11 @@ export default function SignUp() {
             callbackUrl: "/dashboard",
           });
         } else {
-          setError(response.message);
+          toast.error(response.message);
         }
       });
     } catch (err) {
-      setError("No se pudo completar el registro. Por favor intenta nuevamente.");
+      toast.error("No se pudo completar el registro. Por favor intenta nuevamente.");
     } finally {
       setIsLoading(false);
     }

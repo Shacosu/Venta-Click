@@ -9,15 +9,15 @@ export default function Sidebar() {
   const storeSlug = pathname.split('/')[1];
 
   const menuItems = [
-    { id: "overview", label: "General", icon: "📊", href: `/${storeSlug}/dashboard` },
-    { id: "products", label: "Productos", icon: "📦", href: `/${storeSlug}/dashboard/products` },
-    { id: "customers", label: "Catálogos", icon: "📚", href: `/${storeSlug}/dashboard/catalogs` },
-    { id: "segments", label: "Clientes", icon: "👥", href: `/${storeSlug}/dashboard/customers` },
-    { id: "regions", label: "Regiones", icon: "🌎", href: `/${storeSlug}/dashboard/regions` },
-    { id: "revenue", label: "Ingresos", icon: "💰", href: `/${storeSlug}/dashboard/revenue` },
-    { id: "orders", label: "Pedidos", icon: "📝", href: `/${storeSlug}/dashboard/orders` },
-    { id: "discounts", label: "Descuentos", icon: "🏷️", href: `/${storeSlug}/dashboard/discounts` },
-    { id: "configuration", label: "Configuración", icon: "⚙️", href: `/${storeSlug}/dashboard/configuration` },
+    { id: "overview", label: "General", icon: "📊", href: `/${storeSlug}/dashboard`, disabled: false },
+    { id: "products", label: "Productos", icon: "📦", href: `/${storeSlug}/dashboard/products`, disabled: false },
+    { id: "customers", label: "Catálogos", icon: "📚", href: `/${storeSlug}/dashboard/catalogs`, disabled: false },
+    { id: "segments", label: "Clientes", icon: "👥", href: `/${storeSlug}/dashboard/customers`, disabled: true },
+    { id: "regions", label: "Regiones", icon: "🌎", href: `/${storeSlug}/dashboard/regions`, disabled: true },
+    { id: "revenue", label: "Ingresos", icon: "💰", href: `/${storeSlug}/dashboard/revenue`, disabled: true },
+    { id: "orders", label: "Pedidos", icon: "📝", href: `/${storeSlug}/dashboard/orders`, disabled: true },
+    { id: "discounts", label: "Descuentos", icon: "🏷️", href: `/${storeSlug}/dashboard/discounts`, disabled: true },
+    { id: "configuration", label: "Configuración", icon: "⚙️", href: `/${storeSlug}/dashboard/configuration`, disabled: false },
   ];
 
  
@@ -37,14 +37,16 @@ export default function Sidebar() {
             {menuItems.slice(0, 5).map((item) => (
               <motion.button
                 key={item.id}
-                className={`flex items-center w-full px-3 text-white py-2 text-sm rounded-lg cursor-pointer ${
+                className={`flex items-center w-full px-3 text-white py-2 text-sm rounded-lg cursor-pointer disabled:opacity-50 ${
                   pathname === item.href
                     ? "bg-gray-100/20 text-primary font-medium"
                     : "text-gray-700 hover:bg-gray-200"
                 }`}
                 onClick={() => router.push(item.href)}
+                disabled={item.disabled}
                 whileHover={{ x: 4 }}
                 whileTap={{ scale: 0.98 }}
+                title={item.disabled ? "Proximamente" : item.label}
               >
                 <span className="mr-3">{item.icon}</span>
                 {item.label}
@@ -59,14 +61,16 @@ export default function Sidebar() {
             {menuItems.slice(5, 8).map((item) => (
               <motion.button
                 key={item.id}
-                className={`flex items-center w-full px-3 text-white py-2 text-sm rounded-lg ${
+                className={`flex items-center w-full px-3 text-white py-2 text-sm rounded-lg cursor-pointer disabled:opacity-50 ${
                   pathname === item.href
                     ? "bg-gray-100/20 text-primary font-medium"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
                 onClick={() => router.push(item.href)}
+                disabled={item.disabled}
                 whileHover={{ x: 4 }}
                 whileTap={{ scale: 0.98 }}
+                title={item.disabled ? "Proximamente" : item.label}
               >
                 <span className="mr-3">{item.icon}</span>
                 {item.label} {pathname === item.href}
@@ -81,14 +85,16 @@ export default function Sidebar() {
             {menuItems.slice(8).map((item) => (
               <motion.button
                 key={item.id}
-                className={`flex items-center w-full px-3 text-white py-2 text-sm rounded-lg ${
+                className={`flex items-center w-full px-3 text-white py-2 text-sm rounded-lg cursor-pointer disabled:opacity-50 ${
                   pathname === item.href
                     ? "bg-gray-100/20 text-primary font-medium"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
                 onClick={() => router.push(item.href)}
+                disabled={item.disabled}
                 whileHover={{ x: 4 }}
                 whileTap={{ scale: 0.98 }}
+                title={item.disabled ? "Proximamente" : item.label}
               >
                 <span className="mr-3">{item.icon}</span>
                 {item.label} {pathname === item.href}

@@ -10,7 +10,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const isPremium = user?.subscription?.status === 'authorized';
 
-  console.log(isPremium)
   return (
     isPremium ? (
       <div className="flex h-screen bg-gray-50">

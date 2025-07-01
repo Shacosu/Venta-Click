@@ -4,6 +4,7 @@ import { useState, use, useTransition } from "react";
 import { motion } from "motion/react";
 import { Catalog } from "@prisma/client";
 import { createProduct } from "@/services/product";
+import { toast } from "sonner";
 
 type CatalogsPromise = Promise<Catalog[]>;
 
@@ -21,7 +22,7 @@ export default function ClientProducts({ catalogs }: { catalogs: CatalogsPromise
 
   const handleImproveWithAI = async () => {
     if (!name && !description) {
-      alert('Por favor, ingresa un nombre o descripción para mejorar.');
+      toast.warning('Por favor, ingresa un nombre o descripción para mejorar.');
       return;
     }
     setIsImproving(true);
@@ -37,7 +38,7 @@ export default function ClientProducts({ catalogs }: { catalogs: CatalogsPromise
       if (data.improvedDescription) setDescription(data.improvedDescription);
     } catch (error) {
       console.error('Error al mejorar con IA:', error);
-      alert('Hubo un error al mejorar el texto.');
+      toast.error('Hubo un error al mejorar el texto.');
     } finally {
       setIsImproving(false);
     }
@@ -46,7 +47,7 @@ export default function ClientProducts({ catalogs }: { catalogs: CatalogsPromise
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!name || !price) {
-      alert("El nombre y el precio son obligatorios.");
+      toast.error("El nombre y el precio son obligatorios.");
       return;
     }
     startTransition(async () => {
@@ -61,7 +62,7 @@ export default function ClientProducts({ catalogs }: { catalogs: CatalogsPromise
         selectedCatalogId || undefined
       );
       if (result.success) {
-        alert(result.message);
+        toast.success(result.message);
         setName('');
         setDescription('');
         setPrice('');
@@ -69,7 +70,7 @@ export default function ClientProducts({ catalogs }: { catalogs: CatalogsPromise
         setStock('');
         setSelectedCatalogId('');
       } else {
-        alert(`Error: ${result.message}`);
+        toast.error(result.message);
       }
     });
   };
@@ -77,42 +78,91 @@ export default function ClientProducts({ catalogs }: { catalogs: CatalogsPromise
   return (
     <div className="col-span-4">
       <motion.div
-        className="bg-white p-6 rounded-xl shadow-md border border-gray-100"
+        className="bg-white p-6 rounded-xl shadow-md border border-gray-100 min-h-full"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Agregar Producto</h2>
-          <button type="button" onClick={handleImproveWithAI} disabled={isImproving} className="px-3 py-1.5 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:bg-purple-300 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleImproveWithAI}
+            disabled={isImproving}
+            className="px-3 py-1.5 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:bg-purple-300 flex items-center gap-2">
             {isImproving ? 'Mejorando...' : '✨ Mejorar con IA'}
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
-            <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full input-field" placeholder="Ej: Camiseta de algodón" required />
+            <label htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              placeholder="Ej: Camiseta de algodón"
+              required />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-            <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="w-full input-field" placeholder="Descripción del producto..."></textarea>
+            <label htmlFor="description"
+              className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className="w-full h-44 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              placeholder="Descripción del producto..."></textarea>
           </div>
           <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
-            <input id="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full input-field" placeholder="Ej: 19990" min="0" step="0.01" required />
+            <label htmlFor="price"
+              className="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
+            <input
+              id="price"
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              placeholder="Ej: 19990"
+              min="0"
+              step="0.01"
+              required />
           </div>
           <div>
-            <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">URL de imagen</label>
-            <input id="imageUrl" type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="w-full input-field" placeholder="https://ejemplo.com/imagen.jpg" />
+            <label htmlFor="imageUrl"
+              className="block text-sm font-medium text-gray-700 mb-1">URL de imagen</label>
+            <input
+              id="imageUrl"
+              type="text"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              placeholder="https://ejemplo.com/imagen.jpg" />
           </div>
           <div>
-            <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-            <input id="stock" type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="w-full input-field" placeholder="Ej: 100" min="0" />
+            <label htmlFor="stock"
+              className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+            <input
+              id="stock"
+              type="number"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              placeholder="Ej: 100"
+              min="0" />
           </div>
           <div>
-            <label htmlFor="catalog" className="block text-sm font-medium text-gray-700 mb-1">Asignar a Catálogo (Opcional)</label>
-            <select id="catalog" value={selectedCatalogId} onChange={(e) => setSelectedCatalogId(e.target.value)} className="w-full input-field">
-              <option value="">No asignar</option>
+            <label htmlFor="catalog"
+              className="block text-sm font-medium text-gray-700 mb-1">Asignar a Catálogo (Opcional)</label>
+            <select
+              id="catalog"
+              value={selectedCatalogId}
+              onChange={(e) => setSelectedCatalogId(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              <option value="">Sin catalogo</option>
               {catalogsData.map((catalog) => (
                 <option key={catalog.id} value={catalog.id}>{catalog.name}</option>
               ))}

@@ -26,9 +26,21 @@ export async function getProductById(id: string) {
   if (!session?.user?.id) return null;
 
   try {
-    return await db.product.findFirst({
+    const product = await db.product.findFirst({
       where: { id, userId: session.user.id },
     });
+
+    if (!product) return null;
+
+    const catalogItem = await db.catalogItem.findFirst({
+      where: { productId: id },
+      select: { catalogId: true },
+    });
+
+    return {
+      ...product,
+      catalogId: catalogItem?.catalogId || null,
+    };
   } catch (error) {
     console.error("Error al obtener el producto:", error);
     return null;
@@ -94,18 +106,52 @@ export async function createProduct(
   }
 }
 
-export async function updateProduct(id: string, data: Partial<ProductCreationData>) {
+export async function updateProduct(
+  id: string,
+  data: Partial<ProductCreationData>,
+  catalogId?: string | null
+) {
   const session = await auth();
   if (!session?.user?.id) {
     return { success: false, message: "Usuario no autenticado." };
   }
 
   try {
-    await db.product.update({
-      where: { id, userId: session.user.id },
-      data,
+    await db.$transaction(async (prisma) => {
+      const updatedProduct = await prisma.product.update({
+        where: { id, userId: session.user.id },
+        data,
+      });
+
+      const existingCatalogItem = await prisma.catalogItem.findFirst({
+        where: { productId: id },
+      });
+
+      if (catalogId) {
+        if (existingCatalogItem) {
+          await prisma.catalogItem.update({
+            where: { id: existingCatalogItem.id },
+            data: { catalogId: catalogId, price: updatedProduct.price },
+          });
+        } else {
+          await prisma.catalogItem.create({
+            data: {
+              productId: id,
+              catalogId: catalogId,
+              quantity: 1,
+              price: updatedProduct.price,
+            },
+          });
+        }
+      } else if (existingCatalogItem) {
+        await prisma.catalogItem.delete({
+          where: { id: existingCatalogItem.id },
+        });
+      }
     });
+
     revalidatePath("/dashboard/products");
+    revalidatePath("/dashboard/catalogs");
     return { success: true, message: "Producto actualizado." };
   } catch (error) {
     console.error("Error al actualizar el producto:", error);

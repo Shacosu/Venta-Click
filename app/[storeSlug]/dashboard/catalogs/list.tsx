@@ -6,6 +6,8 @@ import { motion } from "motion/react";
 import { use } from "react";
 import { startTransition } from "react";
 import { deleteCatalog } from "@/services/catalog";
+import { toast } from "sonner";
+import { formatCurrency } from "@/utils/functions";
 
 // Define the type for a catalog that includes its items and the product details for each item.
 type CatalogWithItems = Catalog & {
@@ -32,9 +34,9 @@ export default function List({ catalogs }: { catalogs: Promise<CatalogWithItems[
     startTransition(async () => {
       const result = await deleteCatalog(id);
       if (result.success) {
-        alert(result.message);
+        toast.success(result.message);
       } else {
-        alert(result.message);
+        toast.error(result.message);
       }
     });
   }
@@ -109,8 +111,8 @@ export default function List({ catalogs }: { catalogs: Promise<CatalogWithItems[
                           {item.product.name}
                           <span className="text-gray-500"> x{item.quantity}</span>
                         </span>
-                        <span className="font-medium">
-                          ${(item.price * item.quantity).toLocaleString()}
+                                                <span className="font-medium">
+                          {formatCurrency(item.price * item.quantity)}
                         </span>
                       </li>
                     ))}

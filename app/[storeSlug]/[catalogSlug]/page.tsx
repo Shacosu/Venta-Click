@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import { ChevronLeft, PackageOpen } from 'lucide-react';
 import AddToCartButton from '@/components/ui/AddToCartButton';
 import CartButton from '@/components/ui/CartButton';
+import { formatCurrency } from "@/utils/functions";
 
 // Define the type for the catalog, including the store, items, and products.
 type CatalogWithProducts = Prisma.CatalogGetPayload<{
@@ -105,8 +106,8 @@ export default async function CatalogPage({ params }: CatalogPageProps) {
                       {item.product.description}
                     </p>
                   )}
-                  <p className="text-2xl font-extrabold text-gray-800 mt-4">
-                    $ {item.price.toLocaleString('es-CL')}
+                                    <p className="text-2xl font-extrabold text-gray-800 mt-4">
+                    {formatCurrency(item.price)}
                   </p>
                   <AddToCartButton product={{
                     id: item.product.id,

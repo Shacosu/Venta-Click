@@ -23,7 +23,6 @@ export default function CreateStoreForm() {
 
     startTransition(async () => {
       const result = await createStore(name);
-      console.log(result);
       if (result.success && result.slug) {
         // Primero, actualizamos la sesión con el nuevo estado y el slug de la tienda
         await update({ hasStore: true, storeSlug: result.slug });

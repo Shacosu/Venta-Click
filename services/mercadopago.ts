@@ -30,16 +30,10 @@ const plans = {
 
 export const createPayment = async (email: string, planSelected: "mensual" | "trimestral" | "anual", userId: string) => {
     const selectedPlan = plans[planSelected]
-    console.log({
-      email,
-      planSelected,
-      selectedPlan,
-      userId
-    })
     const suscription = await new PreApproval(mpClient).create({
       body: {
         payer_email: email,
-        back_url: process.env.APP_URL! || "http://localhost:3000",
+        back_url: process.env.NEXTAUTH_URL! + "/dashboard",
         reason: "Suscripción a Venta Click",
         auto_recurring: {
           frequency: selectedPlan.frequency,

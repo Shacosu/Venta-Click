@@ -4,16 +4,18 @@ import { motion } from "motion/react"
 import { Product } from "@prisma/client"
 import { use } from "react"
 import Link from "next/link"
+import { formatCurrency } from "@/utils/functions"
 
 interface ListProps {
   productsData: Promise<Product[]>
+  storeSlug: string;
 }
 
-export default function List({ productsData }: ListProps) {
+export default function List({ productsData, storeSlug }: ListProps) {
   const products = use(productsData)
   return (
     <motion.div
-      className="col-span-8 bg-white p-6 rounded-xl shadow-md border border-gray-100 overflow-x-auto"
+      className="col-span-8 bg-white p-6 rounded-xl shadow-md border border-gray-100 "
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 }}
@@ -21,8 +23,9 @@ export default function List({ productsData }: ListProps) {
       <h2 className="text-xl font-semibold mb-4">Listado de Productos</h2>
 
       {products.length > 0 ? (
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <div className="overflow-y-auto max-h-[calc(100vh-22rem)]">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 sticky top-0 z-10">
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
@@ -59,15 +62,15 @@ export default function List({ productsData }: ListProps) {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">${product.price}</div>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900">{formatCurrency(product.price)}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{product.stock}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <Link
-                    href={`/dashboard/products/${product.id}`}
+                    href={`/${storeSlug}/dashboard/products/${product.id}`}
                     className="text-primary hover:text-primary-focus mr-4"
                   >
                     Editar
@@ -81,8 +84,9 @@ export default function List({ productsData }: ListProps) {
                 </td>
               </motion.tr>
             ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       ) : (
         <div>
           <motion.div
